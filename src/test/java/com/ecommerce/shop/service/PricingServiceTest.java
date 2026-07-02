@@ -62,6 +62,24 @@ class PricingServiceTest {
     }
 
     @Test
+    void shippingFeeIsFlatBelowThreshold() {
+        assertThat(pricingService.shippingFee(new BigDecimal("99.99"))).isEqualByComparingTo("5.99");
+        assertThat(pricingService.shippingFee(BigDecimal.ZERO)).isEqualByComparingTo("5.99");
+    }
+
+    @Test
+    void shippingFeeIsFreeAtThreshold() {
+        assertThat(pricingService.shippingFee(new BigDecimal("100.00"))).isEqualByComparingTo("0");
+        assertThat(pricingService.shippingFee(new BigDecimal("250.00"))).isEqualByComparingTo("0");
+    }
+
+    @Test
+    void shippingFeeRejectsInvalidInput() {
+        assertThatThrownBy(() -> pricingService.shippingFee(null)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> pricingService.shippingFee(new BigDecimal("-1"))).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     void orderTotalHandlesMissingCustomer() {
         OrderItem item = new OrderItem().quantity(1).unitPrice(new BigDecimal("5.00"));
         assertThat(pricingService.orderTotal(List.of(item), null)).isEqualByComparingTo("5.00");

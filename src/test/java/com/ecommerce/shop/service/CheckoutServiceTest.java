@@ -79,11 +79,28 @@ class CheckoutServiceTest {
 
         ArgumentCaptor<ShopOrder> saved = ArgumentCaptor.forClass(ShopOrder.class);
         verify(shopOrderRepository).save(saved.capture());
-        // 10 x 10.00 with 3% bulk discount = 97.00, minus 10% loyalty = 87.30
-        assertThat(saved.getValue().getTotalAmount()).isEqualByComparingTo("87.30");
+        // 10 x 10.00 with 3% bulk discount = 97.00, minus 10% loyalty = 87.30,
+        // below the free-shipping threshold so + 5.99 shipping = 93.29
+        assertThat(saved.getValue().getTotalAmount()).isEqualByComparingTo("93.29");
         assertThat(saved.getValue().getStatus()).isEqualTo(OrderStatus.PAID);
         assertThat(product.getStockQuantity()).isEqualTo(10);
         verify(productRepository).save(product);
+    }
+
+    @Test
+    void checkoutShipsFreeAboveThreshold() {
+        // 15 x 10.00 with 3% bulk discount = 145.50, minus 10% loyalty = 130.95 >= 100 so no shipping fee
+        OrderItem item = new OrderItem().quantity(15).unitPrice(new BigDecimal("10.00")).product(product);
+        when(shopOrderRepository.findById(7L)).thenReturn(Optional.of(order));
+        when(orderItemRepository.findAllByOrderId(7L)).thenReturn(List.of(item));
+        when(shopOrderRepository.save(any(ShopOrder.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(shopOrderMapper.toDto(any(ShopOrder.class))).thenReturn(new ShopOrderDTO());
+
+        checkoutService.checkout(7L);
+
+        ArgumentCaptor<ShopOrder> saved = ArgumentCaptor.forClass(ShopOrder.class);
+        verify(shopOrderRepository).save(saved.capture());
+        assertThat(saved.getValue().getTotalAmount()).isEqualByComparingTo("130.95");
     }
 
     @Test

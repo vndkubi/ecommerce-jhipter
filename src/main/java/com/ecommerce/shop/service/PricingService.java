@@ -17,7 +17,12 @@ public class PricingService {
     /** Quantity at or above which a line gets the bulk discount. */
     public static final int BULK_QUANTITY_THRESHOLD = 10;
 
+    /** Merchandise total at or above which the order ships free. */
+    public static final BigDecimal FREE_SHIPPING_THRESHOLD = new BigDecimal("100.00");
+
     private static final BigDecimal BULK_DISCOUNT_RATE = new BigDecimal("0.03");
+
+    private static final BigDecimal FLAT_SHIPPING_FEE = new BigDecimal("5.99");
 
     /**
      * Loyalty discount rate for a customer.
@@ -55,6 +60,20 @@ public class PricingService {
             gross = gross.subtract(gross.multiply(BULK_DISCOUNT_RATE));
         }
         return gross.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * Shipping fee for an order: free at or above
+     * {@link #FREE_SHIPPING_THRESHOLD}, otherwise a flat fee.
+     */
+    public BigDecimal shippingFee(BigDecimal merchandiseTotal) {
+        if (merchandiseTotal == null || merchandiseTotal.signum() < 0) {
+            throw new IllegalArgumentException("merchandiseTotal must be >= 0");
+        }
+        if (merchandiseTotal.compareTo(FREE_SHIPPING_THRESHOLD) >= 0) {
+            return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        }
+        return FLAT_SHIPPING_FEE;
     }
 
     /**
