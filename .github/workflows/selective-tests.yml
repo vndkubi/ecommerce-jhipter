@@ -34,7 +34,10 @@ jobs:
       - name: Select affected tests
         id: select
         run: |
-          npm install -g mcp-code-graph
+          # Install from GitHub until the --base/--format release lands on npm
+          # (the repo's `prepare` script builds dist on install). Afterwards:
+          # npm install -g mcp-code-graph@^1.1
+          npm install -g github:vndkubi/code-graph
           SELECTION=$(codegraph affected-tests --base "origin/${{ github.base_ref }}" --format maven --quiet)
           echo "selection=$SELECTION" >> "$GITHUB_OUTPUT"
           echo "Selected: $SELECTION"
