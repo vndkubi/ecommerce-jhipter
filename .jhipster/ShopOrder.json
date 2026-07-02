@@ -1,0 +1,37 @@
+{
+  "annotations": {
+    "changelogDate": "20260702154735"
+  },
+  "applications": ["ecommerce"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "placedAt",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "OrderStatus",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "PENDING,PAID,SHIPPED,DELIVERED,CANCELLED"
+    },
+    {
+      "fieldName": "totalAmount",
+      "fieldType": "BigDecimal"
+    }
+  ],
+  "name": "ShopOrder",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "email",
+      "otherEntityName": "customer",
+      "relationshipName": "customer",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

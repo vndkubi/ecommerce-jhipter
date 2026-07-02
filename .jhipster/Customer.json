@@ -1,0 +1,36 @@
+{
+  "annotations": {
+    "changelogDate": "20260702154635"
+  },
+  "applications": ["ecommerce"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "firstName",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "lastName",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "email",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "phone",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "loyaltyPoints",
+      "fieldType": "Integer"
+    }
+  ],
+  "name": "Customer",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

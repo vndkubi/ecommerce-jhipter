@@ -1,0 +1,20 @@
+{
+  "generator-jhipster": {
+    "applicationType": "monolith",
+    "authenticationType": "jwt",
+    "baseName": "ecommerce",
+    "buildTool": "maven",
+    "clientFramework": "no",
+    "devDatabaseType": "h2Disk",
+    "enableTranslation": false,
+    "entities": ["Category", "Product", "Customer", "ShopOrder", "OrderItem"],
+    "jhipsterVersion": "8.11.0",
+    "jwtSecretKey": "ODY5NzM3YzU1YmFiMWU3NmZlZTA2MmQzYjE3YjFlMDZmYzVhYmMzYjZlNzFlMjc1NGQ3NWViN2NjYjM4NjkyMmQyMmFiNWMxNWZiM2ZlOGI4MjUzNGY2ZDc4MGVlZjllOTcwMDNjMWMyNzhkMDViYWNiZjkxODAxNmQ3NDNiYTc=",
+    "lastLiquibaseTimestamp": 1783007315000,
+    "packageName": "com.ecommerce.shop",
+    "prodDatabaseType": "postgresql",
+    "skipClient": true,
+    "skipJhipsterDependencies": true,
+    "testFrameworks": []
+  }
+}
