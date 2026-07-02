@@ -1,0 +1,48 @@
+name: Selective tests
+
+# Runs only the tests that can be affected by the PR's diff, selected through
+# the CodeGraph reverse dependency graph. Falls back to the full suite (ALL)
+# whenever the selection cannot be proven safe: build/config changes, deleted
+# files, or anything the index cannot classify.
+on:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Cache CodeGraph index
+        uses: actions/cache@v4
+        with:
+          path: .codegraph
+          key: codegraph-${{ github.event.pull_request.base.sha }}
+          restore-keys: codegraph-
+
+      - name: Select affected tests
+        id: select
+        run: |
+          npm install -g mcp-code-graph
+          SELECTION=$(codegraph affected-tests --base "origin/${{ github.base_ref }}" --format maven --quiet)
+          echo "selection=$SELECTION" >> "$GITHUB_OUTPUT"
+          echo "Selected: $SELECTION"
+
+      - name: Run selected tests
+        run: |
+          if [ "${{ steps.select.outputs.selection }}" = "ALL" ]; then
+            ./mvnw -ntp verify
+          else
+            ./mvnw -ntp verify ${{ steps.select.outputs.selection }}
+          fi
