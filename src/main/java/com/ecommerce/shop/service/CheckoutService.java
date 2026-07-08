@@ -9,6 +9,7 @@ import com.ecommerce.shop.repository.ProductRepository;
 import com.ecommerce.shop.repository.ShopOrderRepository;
 import com.ecommerce.shop.service.dto.ShopOrderDTO;
 import com.ecommerce.shop.service.mapper.ShopOrderMapper;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
 import org.slf4j.Logger;
@@ -86,7 +87,8 @@ public class CheckoutService {
             productRepository.save(product);
         }
 
-        order.setTotalAmount(pricingService.orderTotal(items, order.getCustomer()));
+        BigDecimal merchandiseTotal = pricingService.orderTotal(items, order.getCustomer());
+        order.setTotalAmount(merchandiseTotal.add(pricingService.shippingFee(merchandiseTotal)));
         order.setStatus(OrderStatus.PAID);
         order = shopOrderRepository.save(order);
         return shopOrderMapper.toDto(order);
